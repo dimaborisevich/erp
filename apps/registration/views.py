@@ -20,7 +20,7 @@ class UserRegistrationView(generics.CreateAPIView):
             {
                 "user": serializer.data,
                 "refresh": str(refresh),
-                "access": str(refresh.access_token),
+                "access": str(refresh.access_token),                
             },
             status=status.HTTP_201_CREATED,
         )
@@ -42,6 +42,7 @@ class UserLoginView(generics.GenericAPIView):
                 {
                     "refresh": str(refresh),
                     "access": str(refresh.access_token),
+                    "role": user.role.name if user.role else None, 
                 },
                 status=status.HTTP_200_OK,
             )

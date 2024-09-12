@@ -1,0 +1,112 @@
+swagger: '2.0'
+info:
+  title: Your API
+  description: Your API description
+  version: v1
+host: 127.0.0.1:8000
+schemes:
+- http
+basePath: /api/v1
+consumes:
+- application/json
+produces:
+- application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+- Basic: []
+paths:
+  /login/:
+    post:
+      operationId: login_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/UserLogin'
+      responses:
+        '200':
+          description: 'OK'
+          schema:
+            $ref: '#/definitions/UserLogin'
+        '401':
+          description: 'UNAUTHORIZED'
+      tags:
+      - login
+    parameters: []
+  /register/:
+    post:
+      operationId: register_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/UserRegistration'
+      responses:
+        '201':
+          description: 'CREATED'
+          schema:
+            $ref: '#/definitions/UserRegistration'
+        '400':
+          description: 'BAD REQUEST'
+      tags:
+      - register
+    parameters: []
+definitions:
+  UserLogin:
+    required:
+    - username
+    - password
+    type: object
+    properties:
+      username:
+        title: Username
+        type: string
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        minLength: 1
+      role:
+        title: Role
+        type: string
+        readOnly: true
+  UserRegistration:
+    required:
+    - username
+    - password
+    - password_confirm
+    - email
+    - role
+    type: object
+    properties:
+      username:
+        title: Username
+        description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+          only.
+        type: string
+        pattern: ^[\w.@+-]+$
+        maxLength: 150
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        minLength: 1
+      password_confirm:
+        title: Password confirm
+        type: string
+        minLength: 1
+      email:
+        title: Email
+        type: string
+        format: email
+        maxLength: 254
+        minLength: 1
+      role:
+        title: Role
+        type: integer

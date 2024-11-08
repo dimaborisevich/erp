@@ -23,9 +23,9 @@ from rest_framework.renderers import JSONRenderer
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Your API",
+      title="ERP API",
       default_version='v1',
-      description="Your API description",
+      description="ERP API description",
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),

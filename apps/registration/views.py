@@ -1,11 +1,17 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
-from apps.registration.serializers import UserRegistrationSerializer, UserLoginSerializer
+from apps.registration.serializers import (
+    UserRegistrationSerializer, 
+    UserLoginSerializer,
+    UserProfileUpdateSerializer,
+)
+from apps.registration.permissions import IsSuperAdminOrAccountManager
+
 
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
@@ -48,4 +54,12 @@ class UserLoginView(generics.GenericAPIView):
             )
         else:
             return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        
 
+
+class UserProfileUpdateView(generics.UpdateAPIView):
+    serializer_class = UserProfileUpdateSerializer
+    permission_classes = [AllowAny] #[permissions.IsAuthenticated, IsSuperAdminOrAccountManager]
+
+    def get_object(self):
+        return self.request.user

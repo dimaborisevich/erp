@@ -56,3 +56,11 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'first_name', 'middle_name', 'last_name', 'email', 'tg_nickname')
+
+
+class UserListSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(source = 'role.name')
+
+    class Meta:
+        model = User
+        fields = ('role', 'username', 'first_name','middle_name', 'last_name')

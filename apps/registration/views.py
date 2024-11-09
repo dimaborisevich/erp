@@ -9,8 +9,12 @@ from apps.registration.serializers import (
     UserRegistrationSerializer, 
     UserLoginSerializer,
     UserProfileUpdateSerializer,
+    UserListSerializer,
 )
 from apps.registration.permissions import IsSuperAdminOrAccountManager
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -59,7 +63,15 @@ class UserLoginView(generics.GenericAPIView):
 
 class UserProfileUpdateView(generics.UpdateAPIView):
     serializer_class = UserProfileUpdateSerializer
-    permission_classes = [AllowAny] #[permissions.IsAuthenticated, IsSuperAdminOrAccountManager]
+    permission_classes = [permissions.IsAuthenticated, IsSuperAdminOrAccountManager]
 
     def get_object(self):
         return self.request.user
+
+
+class AdminAccountManagerListView(generics.ListAPIView):
+    serializer_class = UserListSerializer
+    permission_classes = [AllowAny] 
+
+    def get_queryset(self):
+        return User.objects.filter(role__name__in=['Суперадмин','Аккаунт-менеджер'])

@@ -69,9 +69,16 @@ class UserProfileUpdateView(generics.UpdateAPIView):
         return self.request.user
 
 
-class AdminAccountManagerListView(generics.ListAPIView):
+class AdminListView(generics.ListAPIView):
     serializer_class = UserListSerializer
     permission_classes = [AllowAny] 
 
     def get_queryset(self):
-        return User.objects.filter(role__name__in=['Суперадмин','Аккаунт-менеджер'])
+        return User.objects.filter(role__name__in=['Суперадмин'])
+    
+class ManagerListView(generics.ListAPIView):
+    serializer_class = UserListSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return User.objects.filter(role__name__in=['Аккаунт-менеджер'])

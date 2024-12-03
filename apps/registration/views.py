@@ -1,7 +1,6 @@
 from django.shortcuts import render
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
@@ -10,6 +9,7 @@ from apps.registration.serializers import (
     UserLoginSerializer,
     UserProfileUpdateSerializer,
     UserListSerializer,
+    ChangePasswordSerializer,
 )
 from apps.registration.permissions import IsSuperAdminOrAccountManager
 from django.contrib.auth import get_user_model
@@ -82,3 +82,21 @@ class ManagerListView(generics.ListAPIView):
 
     def get_queryset(self):
         return User.objects.filter(role__name__in=['Аккаунт-менеджер'])
+    
+
+class ChangePasswordView(generics.UpdateAPIView):
+    serializer_class=ChangePasswordSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = request.user
+        if not user.check_password(serializer.validated_data['old_password']):
+            return Response({"old_password": "Неверный текущий пароль"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user.set_password(serializer.validated_data['new_password'])
+        user.save()
+
+        return Response({"detail": "Пароль успешно изменен"}, status=status.HTTP_200_OK)

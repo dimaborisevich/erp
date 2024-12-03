@@ -5,6 +5,7 @@ from apps.registration.views import (
     UserLoginView,
     AdminListView,
     ManagerListView,
+    ChangePasswordView,
 ) 
 
 urlpatterns = [
@@ -12,5 +13,6 @@ urlpatterns = [
     path('login/', UserLoginView.as_view(), name='login'),
     path('profileupdate/', UserProfileUpdateView.as_view(), name='profile-update'),
     path('admins-list/', AdminListView.as_view(), name='admins-list'),
-    path('managers-list/', ManagerListView.as_view(), name='managers-list')
+    path('managers-list/', ManagerListView.as_view(), name='managers-list'),
+    path('change-pass/', ChangePasswordView.as_view(), name='change-password'),
 ]

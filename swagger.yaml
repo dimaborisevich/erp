@@ -20,7 +20,7 @@ paths:
   /login/:
     post:
       operationId: login_create
-      description: ''
+      description: 'Вход пользователя.'
       parameters:
       - name: data
         in: body
@@ -36,11 +36,11 @@ paths:
           description: 'UNAUTHORIZED'
       tags:
       - login
-    parameters: []
+
   /register/:
     post:
       operationId: register_create
-      description: ''
+      description: 'Регистрация пользователя.'
       parameters:
       - name: data
         in: body
@@ -56,7 +56,105 @@ paths:
           description: 'BAD REQUEST'
       tags:
       - register
-    parameters: []
+
+  /profileupdate/:
+    put:
+      operationId: profile_update
+      description: 'Обновление профиля пользователя.'
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/UserProfileUpdate'
+      responses:
+        '200':
+          description: 'Профиль успешно обновлен.'
+          schema:
+            $ref: '#/definitions/UserProfileUpdate'
+        '400':
+          description: 'Неверные данные.'
+      tags:
+      - profile
+
+  /admins-list/:
+    get:
+      operationId: admins_list
+      description: 'Получение списка администраторов.'
+      responses:
+        '200':
+          description: 'Список администраторов.'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+      tags:
+      - admins
+
+  /managers-list/:
+    get:
+      operationId: managers_list
+      description: 'Получение списка менеджеров.'
+      responses:
+        '200':
+          description: 'Список менеджеров.'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+      tags:
+      - managers
+
+  /change-pass/:
+    post:
+      operationId: change_password
+      description: 'Изменение пароля пользователя.'
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/ChangePassword'
+      responses:
+        '200':
+          description: 'Пароль успешно изменен.'
+        '400':
+          description: 'Неверные данные.'
+          schema:
+            type: object
+            properties:
+              new_password_confirm:
+                type: string
+                example: "Пароли не совпадают."
+      tags:
+      - password
+
+  /delete/<int:pk>/:
+    delete:
+      operationId: delete_admin_manager
+      description: 'Удаление администратора или менеджера.'
+      parameters:
+      - name: pk
+        in: path
+        required: true
+        type: integer
+      responses:
+        '200':
+          description: 'Пользователь успешно удален.'
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: "Пользователь успешно удален."
+        '404':
+          description: 'Пользователь не найден.'
+        '403':
+          description: 'Доступ запрещен.'
+      tags:
+      - admin
+
+
 definitions:
   UserLogin:
     required:
@@ -76,6 +174,7 @@ definitions:
         title: Role
         type: string
         readOnly: true
+
   UserRegistration:
     required:
     - username
@@ -87,8 +186,7 @@ definitions:
     properties:
       username:
         title: Username
-        description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-          only.
+        description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
         type: string
         pattern: ^[\w.@+-]+$
         maxLength: 150
@@ -110,3 +208,69 @@ definitions:
       role:
         title: Role
         type: integer
+
+  UserProfileUpdate:
+    required:
+    - username
+    - email
+    type: object
+    properties:
+      username:
+        title: Username
+        type: string
+        minLength: 1
+      first_name:
+        title: First Name
+        type: string
+        required: false
+      middle_name:
+        title: Middle Name
+        type: string
+        required: false
+      last_name:
+        title: Last Name
+        type: string
+        required: false
+      email:
+        title: Email
+        type: string
+        format: email
+        maxLength: 254
+        minLength: 1
+      tg_nickname:
+        title: Telegram Nickname
+        type: string
+        required: false
+
+  ChangePassword:
+    required:
+    - old_password
+    - new_password
+    - new_password_confirm
+    type: object
+    properties:
+      old_password:
+        title: Old Password
+        type: string
+        minLength: 1
+      new_password:
+        title: New Password
+        type: string
+        minLength: 1
+        description: 'Пароль должен соответствовать требованиям валидации.'
+      new_password_confirm:
+        title: Confirm New Password
+        type: string
+        minLength: 1
+
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      username:
+        type: string
+      email:
+        type: string
+      role:
+        type: string

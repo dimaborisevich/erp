@@ -100,3 +100,24 @@ class ChangePasswordView(generics.UpdateAPIView):
         user.save()
 
         return Response({"detail": "Пароль успешно изменен"}, status=status.HTTP_200_OK)
+    
+
+class DeleteAdminManagerView(generics.DestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = User.objects.all()
+
+    def delete(self,request, *args, **kwargs):
+        user_id = kwargs.get('pk')
+        user_to_delete = self.get_queryset().filter(pk=user_id).first()
+
+        if not user_to_delete:
+            return Response({"detail": "Пользователь не найден"}, status=status.HTTP_404_NOT_FOUND)
+
+        if user_to_delete.role.name not in ['Суперадмин', 'Аккаунт-менеджер']:
+            return Response({"detail": "Вы можете удалять только аккаунт-менеджеров или суперадминов"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if request.user.role.name != "Суперадмин":
+            return Response({"detail": "Доступ запрещен. Только суперадмины могут удалять учетные записи."}, status=status.HTTP_403_FORBIDDEN)
+        
+        user_to_delete.delete()
+        return Response({"detail": "Пользователь успешно удален"}, status=status.HTTP_200_OK)

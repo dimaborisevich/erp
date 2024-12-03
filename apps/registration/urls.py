@@ -6,6 +6,7 @@ from apps.registration.views import (
     AdminListView,
     ManagerListView,
     ChangePasswordView,
+    DeleteAdminManagerView,
 ) 
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path('admins-list/', AdminListView.as_view(), name='admins-list'),
     path('managers-list/', ManagerListView.as_view(), name='managers-list'),
     path('change-pass/', ChangePasswordView.as_view(), name='change-password'),
+    path('delete/<int:pk>/', DeleteAdminManagerView.as_view(), name='delete-admin-manager'),
 ]

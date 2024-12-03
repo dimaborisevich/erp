@@ -129,6 +129,32 @@ paths:
       tags:
       - password
 
+  /delete/<int:pk>/:
+    delete:
+      operationId: delete_admin_manager
+      description: 'Удаление администратора или менеджера.'
+      parameters:
+      - name: pk
+        in: path
+        required: true
+        type: integer
+      responses:
+        '200':
+          description: 'Пользователь успешно удален.'
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: "Пользователь успешно удален."
+        '404':
+          description: 'Пользователь не найден.'
+        '403':
+          description: 'Доступ запрещен.'
+      tags:
+      - admin
+
+
 definitions:
   UserLogin:
     required:

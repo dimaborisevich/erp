@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(unique=True)
     tg_nickname = models.CharField(max_length=255, blank=True, null=True)
-    middle_name = models.CharField(max_length=150, blank=True, null=True)
+    middle_name = models.CharField(max_length=150, blank=True, null=True) 
     
     # fields for students
     photo = models.ImageField(upload_to='photos/', blank=True, null=True)
